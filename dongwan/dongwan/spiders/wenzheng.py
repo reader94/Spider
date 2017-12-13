@@ -5,21 +5,20 @@ from ..items import DongwanItem
 
 class WenzhengSpider(scrapy.Spider):
     name = "wenzheng"
-    allowed_domains = ["http://wz.sun0769.com/"]
+    allowed_domains = ["wz.sun0769.com"]
     url = 'http://wz.sun0769.com/index.php/question/questionType?type=4&page='
     offset = 0
-    start_urls = [url + str(offset )]
+    start_urls = [url + str(offset)]
 
     def parse(self, response):
-        links = response.xpath("//div[@class='greyframe']/table//td/a[@class='news14']/@href").extract()[0]
+        links = response.xpath("//div[@class='greyframe']/table//td/a[@class='news14']/@href").extract()
         for link in links:
-            yield scrapy.Request(link,callback=self.parse_item)
-        if self.offset<=71130:
-            self.offset+=30
-            yield scrapy.Request(self.url+str(self.offset),callback=self.parse)
+            yield scrapy.Request(link, callback=self.parse_item)
+        if self.offset <= 83910:
+            self.offset += 30
+            yield scrapy.Request(self.url + str(self.offset), callback=self.parse)
 
-
-    def parse_item(self,response):
+    def parse_item(self, response):
         item = DongwanItem()
         item['title'] = response.xpath('//div[contains(@class, "pagecenter p3")]//strong/text()').extract()[0]
         item['number'] = item['title'].split(' ')[-1].split(":")[-1]
@@ -32,3 +31,4 @@ class WenzhengSpider(scrapy.Spider):
 
         item['url'] = response.url
         yield item
+
