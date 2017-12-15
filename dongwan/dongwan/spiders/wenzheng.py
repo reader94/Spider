@@ -22,12 +22,13 @@ class WenzhengSpider(scrapy.Spider):
         item = DongwanItem()
         item['title'] = response.xpath('//div[contains(@class, "pagecenter p3")]//strong/text()').extract()[0]
         item['number'] = item['title'].split(' ')[-1].split(":")[-1]
+        # 先取出有图片的匹配规则，如果没有内容，则返回空列表，如果有内容，返回所有内容的列表
         content = response.xpath('//div[@class="contentext"]/text()').extract()
         if len(content) == 0:
             content = response.xpath('//div[@class="c1 text14_2"]/text()').extract()
-            item['content'] = "".join(content).strip()
+            item['content'] = "".join(content).replace(' ','')
         else:
-            item['content'] = "".join(content).strip()
+            item['content'] = "".join(content).replace(' ','')
 
         item['url'] = response.url
         yield item
